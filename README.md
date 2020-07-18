@@ -4,17 +4,10 @@ Linear Equations System Solver (unique solution and equations = unknowns)
 
 **Class linearEqSystem:**
 
-*Method addEquation:*
-To add a new equation
-
-*Method buildSystem:*
-Creates the needed matrices to use in the solve function
-
-*Method remEquation:*
-Remove just the indicated equation
-
-*Method cleanEquations:*
-Remove all equations
+ 1. *Method addEquation:* To add a new equation;
+ 2. *Method buildSystem:* Creates the needed matrices to use in the solve function ;
+ 3. *Method remEquation:* Remove just the indicated equation;
+ 4. *Method cleanEquations:* Remove all equations.
 
 **Solver function:**
 
