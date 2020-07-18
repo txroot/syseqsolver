@@ -12,18 +12,21 @@
     <script type="text/javascript">
 
     var ziq = new linearEqSystem();
-    var eqo = ziq.addEquation("-(a-10i)/3-(a-10i)/2.6-(a-c)/(31.42i-15.92i)");
-    ziq.addEquation("(a-c)/(31.42i-15.92i)-c/(25.13i)-(c+20)/(6-0.32i)");
+    var eq1 = "-(a-10i)/3-(a-10i)/2.6-(a-c)/(31.42i-15.92i)";
+    var eq2 = "(a-c)/(31.42i-15.92i)-c/(25.13i)-(c+20)/(6-0.32i)";
+    ziq.addEquation(eq1);
+    ziq.addEquation(eq2);
+    ziq.buildSystem();
 
     var txr = solve(ziq.coefMatrix, ziq.consMatrix, ziq.varMatrix, 3);
     console.log(txr);
 
     document.write('<br><br>System of Linear Equations<br><br>');
-    var s = math.parse("-(a-10i)/3-(a-10i)/2.6-(a-c)/(31.42i-15.92i)").toTex() + "= 0";
+    var s = math.parse(eq1).toTex() + "= 0";
     txt = "<img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/>";
     document.write(txt);
 
-    s = math.parse("(a-c)/(31.42i-15.92i)-c/(25.13i)-(c+20)/(6-0.32i)").toTex() + "= 0";
+    s = math.parse(eq2).toTex() + "= 0";
     txt = "<img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/>" + "";
     document.write(txt);
 
@@ -33,7 +36,7 @@
     txt = "<img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/>";
     document.write(txt);
 
-    document.write("<br>Job done!<br><span style='font-size:25px;'>&#129488;</span> <|> <span style='font-size:30px;'>&#9818;</span>");
+    document.write("<br><br>Job done!<br><span style='font-size:25px;'>&#129488;</span> <|> <span style='font-size:30px;'>&#9818;</span>");
     console.log('Job done!');
 
 </script>

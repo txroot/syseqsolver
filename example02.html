@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script type="text/javascript" src="vendor/mathjs/math.js"></script>
+    <script type="text/javascript" src="vendor/algebrajs/algebra-0.2.6.min.js"></script>
+    <script type="text/javascript" src="vendor/algebrite/algebrite.bundle-for-browser.js"></script>
+    <script src="./scripts/syseqsolver.js" type="text/javascript"></script>
+    <script src="./scripts/prettify.js" type="text/javascript"></script>
+    <script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+
+var ziq = new linearEqSystem();
+var eq1 = "(5 - A) / (+500) + (0 + 12 - A) / (-318.309886 i + 0 + 0.000031 i + 260 + 25) - (A - 10 - D) / (+1000)";
+var eq2 = "-(A - 10 - D) / (+1000) + ((D - 1) - 4) / (-3183.098862 i + 470) - 0.05 - (G + 2.5 + 1 - ( D + 2)) / (+0.003142 i + 470 + 100) - (G - ((D + 2) - 1)) / (+150)";
+var eq3 = "-0.025 - (G + 2.5 + 1 - ( D + 2)) / (+0.003142 * i + 470 + 100) - (G - ((D + 2) - 1)) / (+150)";
+ziq.addEquation(eq1);
+ziq.addEquation(eq2);
+ziq.addEquation(eq3);
+ziq.buildSystem();
+
+var txr = solve(ziq.coefMatrix, ziq.consMatrix, ziq.varMatrix, 3);
+    console.log(txr);
+
+    document.write('<br><br>System of Linear Equations<br><br>');
+    var s = math.parse(eq1).toTex() + "= 0";
+    txt = "<img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/>";
+    document.write(txt);
+
+    s = math.parse(eq2).toTex() + "= 0";
+    txt = "<img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/>" + "";
+    document.write(txt);
+
+    s = math.parse(eq3).toTex() + "= 0";
+    txt = "<img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/>" + "";
+    document.write(txt);
+
+    // Results using Cartesian Coordinates
+    document.write('<br><br>Results using Cartesian Coordinates<br><br>');
+    s = math.parse(txr.toString()).toTex();
+    txt = "<img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/>";
+    document.write(txt);
+
+    document.write("<br>Job done!<br><span style='font-size:25px;'>&#129488;</span> <|> <span style='font-size:30px;'>&#9818;</span>");
+    console.log('Job done!');
+
+</script>
+</body>
+</html>

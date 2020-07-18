@@ -15,17 +15,6 @@ import { createMatrix } from './math';
 * @returns {math.Matrix}    Solution Matrix
 */
 
-/**
-import { createMatrix } from './math';
-* Solver function (Cramer's Rule)
-* @param {math.Matrix} coefMatrix   Coefficients Matrix (An)
-* @param {math.Matrix} consMatrix    Constants Matrix (Bn)
-* @param {math.Matrix} varMatrix    Variable Matrix (Xn)
-* @param {int} decPlaces    Desired Decimal Places
-* @returns {math.Matrix}    Code Error: 0 - Success; 1 - Error; 2 - Overflow.
-* @returns {math.Matrix}    Solution Matrix
-*/
-
 function solve( coefMatrix, constMatrix, varMatrix, decPlaces ) {
 
     var c = coefMatrix;
@@ -85,10 +74,18 @@ class linearEqSystem {
         this.varMatrix = math.matrix(),
         this.decPlaces = math.matrix(),
         this.cRes = math.matrix(),
+        this.equatArr = new Array(),
+        this.varNames = new Array(),
         this.cols = 0,
         this.rows = 0,
         this.lastVarRow = 0,      // Save last changed index
         this.lastConstRow = 0,
+        this.cleanEquations = function() {
+            this.equatArr.splice(0, this.equatArr.length)
+        },
+        this.remEquation = function (pos) {
+            this.equatArr[pos] = "";
+         },
         this.prepare = function (inc) {
             this.cols = inc.length;
             this.rows = inc.length;
@@ -99,15 +96,9 @@ class linearEqSystem {
             for(let i=0; i<inc.length; i++) this.varMatrix._data[i] = inc[i];
         },
         this.addEquation = function (leq, inc) {
-            let errorCode = 0;
-            // Insert new equation to Matrix
-                // leq is the left hand of the equation, in the text format a11*X1 + a12*X2 + a1n*Xn
-                // inc is the variable array for the variables matrix (optional)
 
             let csotxt;
-            let foundVar = new Array();
-            let constant = math.complex(0, 0);
-            let variables = new Array();
+            this.equatArr.push(leq);
 
             let m = Algebrite.run("simplify(" + leq + ")");
 
@@ -116,15 +107,7 @@ class linearEqSystem {
             let cs = new algebra.Equation(m, 0);
             csotxt = cs.toString();
 
-            // Get variables names and count it
             let iterData = new Array();
-            let reNum = 0;
-            let reDen = 1;
-            if(cs.lhs.constants.length) reNum = cs.lhs.constants[0].numer;
-            if(cs.lhs.constants.length)reDen = cs.lhs.constants[0].denom;
-            let reConst = math.divide(reNum, reDen);
-            constant.re = reConst;
-
             // Get variables names and count it
             cs.lhs.terms.forEach(function(tE, tI, tO) {
                 tE.variables.forEach(function(vE, vI, vO) {
@@ -132,7 +115,8 @@ class linearEqSystem {
                 });
             });
 
-			// Remove duplicated nodes references
+            // Remove duplicated nodes references
+            iterData = iterData.concat(this.varNames);
             let iterUniqueVar = new Array();
             iterUniqueVar = [...new Set(iterData)];
 
@@ -140,113 +124,146 @@ class linearEqSystem {
             iterUniqueVar = iterUniqueVar.filter(e => e !== 'i');
             iterUniqueVar.sort();
 
-            // Get constant imaginary part
-            cs.lhs.terms.forEach(function(tE, tI, tO) {
-                let num = 0;
-                let den = 1;
-                if(tE.variables.length === 1 && tE.variables[0].variable === 'i') {
-                    num = tE.coefficients[0].numer;
-                    den = tE.coefficients[0].denom;
-                    constant.im = math.divide(num, den);
-                }
-            });
+            // Save the sorted unique variables list
+            this.varNames = iterUniqueVar;
 
-            // Get variables values
-            let varI = 0;   // var index
-            let varN;       // next var
+        },
+        this.buildSystem = function() {
+            let errorCode = 0;
 
-            let mcs = 1;
-            let end = false;
-            do {
-                switch (mcs) {
-                    // Set variable to search for real and imaginary parts
-                    case 1: {
-                        if(varI >= iterUniqueVar.length) { end = true; break; }
-                        varN = iterUniqueVar[varI];
-                        varI++;
-                        mcs++;
+            // Insert new equation to Matrix
+                // leq is the left hand of the equation, in the text format a11*X1 + a12*X2 + a1n*Xn
+                // inc is the variable array for the variables matrix (optional)
+
+            for(let i=0; i<this.equatArr.length; i++) {
+                let csotxt;
+                let foundVar = new Array();
+                let constant = math.complex(0, 0);
+                let variables = new Array();
+                let m = Algebrite.run("simplify(" + this.equatArr[i] + ")");
+
+                // AlgebraJS
+                m = algebra.parse(m);
+                let cs = new algebra.Equation(m, 0);
+
+                // Get constant real part
+                let reNum = 0;
+                let reDen = 1;
+                if(cs.lhs.constants.length) reNum = cs.lhs.constants[0].numer;
+                if(cs.lhs.constants.length)reDen = cs.lhs.constants[0].denom;
+                let reConst = math.divide(reNum, reDen);
+                constant.re = reConst;
+
+                // Get constant imaginary part
+                cs.lhs.terms.forEach(function(tE, tI, tO) {
+                    let num = 0;
+                    let den = 1;
+                    if(tE.variables.length === 1 && tE.variables[0].variable === 'i') {
+                        num = tE.coefficients[0].numer;
+                        den = tE.coefficients[0].denom;
+                        constant.im = math.divide(num, den);
                     }
-                    // Search for the values
-                    case 2: {
-                        // Get and Set variables value
-                        let incCoef = math.complex(0, 0);
-                        cs.lhs.terms.forEach(function(tE, tI, tO) {
-                            let num = 0;
-                            let den = 1;
-                            let inc = '';
-                            let fnd = false;
+                });
 
-                            // Real part of the variable
-                            if(tE.variables.length === 1) {
-                                inc = tE.variables[0].variable;
-                                if(inc == varN) {
-                                    num = tE.coefficients[0].numer;
-                                    den = tE.coefficients[0].denom;
-                                    incCoef.re = math.divide(num, den);
-                                    // Save in the array
-                                    let index = variables.findIndex(item => item.ref == varN);
-                                    if (index > -1) {
-                                        variables[index].re = incCoef.re;
+                // Get variables values
+                let varI = 0;   // var index
+                let varN;       // next var
+
+                let mcs = 1;
+                let end = false;
+                do {
+                    switch (mcs) {
+                        // Set variable to search for real and imaginary parts
+                        case 1: {
+                            if(varI >= this.varNames.length) { end = true; break; }
+                            varN = this.varNames[varI];
+                            varI++;
+                            mcs++;
+                        }
+                        // Search for the values
+                        case 2: {
+                            // Get and Set variables value
+                            let incCoef = math.complex(0, 0);
+                            cs.lhs.terms.forEach(function(tE, tI, tO) {
+                                let num = 0;
+                                let den = 1;
+                                let inc = '';
+                                let fnd = false;
+
+                                // Real part of the variable
+                                if(tE.variables.length === 1) {
+                                    inc = tE.variables[0].variable;
+                                    if(inc == varN) {
+                                        num = tE.coefficients[0].numer;
+                                        den = tE.coefficients[0].denom;
+                                        incCoef.re = math.divide(num, den);
+                                        // Save in the array
+                                        let index = variables.findIndex(item => item.ref == varN);
+                                        if (index > -1) {
+                                            variables[index].re = incCoef.re;
+                                        }
+                                        else variables.push({ ref: varN, re: incCoef.re, im: incCoef.im });
                                     }
-                                    else variables.push({ ref: varN, re: incCoef.re, im: incCoef.im });
                                 }
-                            }
 
-                            // Imaginary part of the variable
-                            if(tE.variables.length === 2 && (tE.variables[0].variable === 'i' || tE.variables[1].variable === 'i' )) {
-                                if(tE.variables[0].variable === 'i') inc = tE.variables[1].variable;
-                                if(tE.variables[1].variable === 'i') inc = tE.variables[0].variable;
-                                if(inc == varN) {
-                                    num = tE.coefficients[0].numer;
-                                    den = tE.coefficients[0].denom;
-                                    incCoef.im = math.divide(num, den);
-                                    // Save in the array
-                                    let index = variables.findIndex(item => item.ref == varN);
-                                    if (index > -1) {
-                                        variables[index].im = incCoef.im;
+                                // Imaginary part of the variable
+                                if(tE.variables.length === 2 && (tE.variables[0].variable === 'i' || tE.variables[1].variable === 'i' )) {
+                                    if(tE.variables[0].variable === 'i') inc = tE.variables[1].variable;
+                                    if(tE.variables[1].variable === 'i') inc = tE.variables[0].variable;
+                                    if(inc == varN) {
+                                        num = tE.coefficients[0].numer;
+                                        den = tE.coefficients[0].denom;
+                                        incCoef.im = math.divide(num, den);
+                                        // Save in the array
+                                        let index = variables.findIndex(item => item.ref == varN);
+                                        if (index > -1) {
+                                            variables[index].im = incCoef.im;
+                                        }
+                                        else variables.push({ ref: varN, re: incCoef.re, im: incCoef.im });
                                     }
-                                    else variables.push({ ref: varN, re: incCoef.re, im: incCoef.im });
                                 }
-                            }
-                        });
-                        mcs--;
+                            });
+                            mcs--;
 
+                        }
+                        default:
+                            break;
                     }
-                    default:
-                        break;
-                }
-            } while (!end);
+                } while (!end);
 
-            // Set data in the corresponding matrix
+                // Set data in the corresponding matrix
 
-            // If the object is empty, do some initializations
-            if(this.cols == 0 ) this.prepare(iterUniqueVar);
+                // If the object is empty, do some initializations
+                if(this.cols == 0 ) this.prepare(this.varNames);
 
-            // Add constant
-            let addCon = math.subtract(0, constant);
-            this.consMatrix.subset(math.index(this.lastConstRow, 0), addCon);
-            this.lastConstRow++;
+                // Add constant
+                let addCon = math.subtract(0, constant);
+                this.consMatrix.subset(math.index(this.lastConstRow, 0), addCon);
+                this.lastConstRow++;
 
-            // Add variables
-            let thisEqSys = this;
-            variables.forEach(function(tE, tI, tO) {
-                let vS = thisEqSys.varMatrix._size[0];
-                for(let i=0; i<vS; i++) {
-                    let thisVar = thisEqSys.varMatrix.subset(math.index(i, 0));
-                    if(thisVar == tE.ref) {
-                        let thisCoef = math.complex(tE.re, tE.im);
-                        thisEqSys.coefMatrix.subset(math.index(thisEqSys.lastVarRow, i), thisCoef);
+                // Add variables
+                let thisEqSys = this;
+                variables.forEach(function(tE, tI, tO) {
+                    let vS = thisEqSys.varMatrix._size[0];
+                    for(let i=0; i<vS; i++) {
+                        let thisVar = thisEqSys.varMatrix.subset(math.index(i, 0));
+                        if(thisVar == tE.ref) {
+                            let thisCoef = math.complex(tE.re, tE.im);
+                            thisEqSys.coefMatrix.subset(math.index(thisEqSys.lastVarRow, i), thisCoef);
+                        }
                     }
-                }
-            });
-            this.lastVarRow++;
+                });
+                this.lastVarRow++;
 
-            csotxt = cs.toString();
-            console.log(cs.toTex());
+                csotxt = cs.toString();
+                console.log(cs.toTex());
+
+            }
 
             return {
                 errorCode:   errorCode
             };
+
         };
     }
 }
