@@ -1,4 +1,5 @@
-##**syseqsolver**
+## **syseqsolver**
+
 Linear Equations System Solver (unique solution and equations = unknowns)
 
 **Class linearEqSystem:**
