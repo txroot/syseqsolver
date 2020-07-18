@@ -1,4 +1,5 @@
 
+
 ## **syseqsolver**
 
 Linear Equations System Solver (unique solution and equations = unknowns)
@@ -29,10 +30,8 @@ Linear Equations System Solver (unique solution and equations = unknowns)
     @param {int} decPlaces    Desired Decimal Places
     @returns {string}    Return a Prettified Number
 
-Look at some of the provided examples...
 
-*
+Please, look at some of the provided examples...
+
 
 *Developed and maintained by André Rocha*
-
-*
