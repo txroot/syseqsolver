@@ -106,7 +106,7 @@ class linearEqSystem {
 
             let csotxt;
             let foundVar = new Array();
-            let constant = math.complex();
+            let constant = math.complex(0, 0);
             let variables = new Array();
 
             let m = Algebrite.run("simplify(" + leq + ")");
