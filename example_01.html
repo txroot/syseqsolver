@@ -23,20 +23,20 @@
 
     document.write('<br><br>System of Linear Equations<br><br>');
     var s = math.parse(eq1).toTex() + "= 0";
-    txt = "<img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/>";
+    txt = "<p><img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/></p>";
     document.write(txt);
 
     s = math.parse(eq2).toTex() + "= 0";
-    txt = "<img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/>" + "";
+    txt = "<p><img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/></p>";
     document.write(txt);
 
     // Results using Cartesian Coordinates
     document.write('<br><br>Results using Cartesian Coordinates<br><br>');
     s = math.parse(txr.toString()).toTex();
-    txt = "<img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/>";
+    txt = "<p><img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/><p>";
     document.write(txt);
 
-    document.write("<br><br>Job done!<br><span style='font-size:25px;'>&#129488;</span> <|> <span style='font-size:30px;'>&#9818;</span>");
+    document.write("<p>Job done!<br><span style='font-size:25px;'>&#129488;</span> <|> <span style='font-size:30px;'>&#9818;</span></p>");
     console.log('Job done!');
 
 </script>
