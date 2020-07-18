@@ -1,12 +1,12 @@
 /*
  * Author : André Rocha
  * Email : anr@isep.ipp.pt
- * Source : https://github.com/txroot/math
+ * Source : https://github.com/txroot/syseqsolver
  */
 
 /**
 import { createMatrix } from './math';
-* Solver function (Cramer's Rule)
+* Solver function
 * @param {math.Matrix} coefMatrix   Coefficients Matrix (An)
 * @param {math.Matrix} consMatrix    Constants Matrix (Bn)
 * @param {math.Matrix} varMatrix    Variable Matrix (Xn)

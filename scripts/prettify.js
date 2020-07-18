@@ -1,12 +1,12 @@
 /*
  * Author : André Rocha
  * Email : anr@isep.ipp.pt
- * Source : https://github.com/txroot/math
+ * Source : https://github.com/txroot/syseqsolver
  */
 
 /**
 import { createMatrix } from './math';
-* Solver function (Cramer's Rule)
+* Prettify function
 * @param {*} inpNumber   Input number to prettify
 * @param {int} outRepres    Desired Output Representation: 0 - Cartesian; 1 - Polar; 2 - Exponential.
 * @param {int} outFormat    Output format: 0 - Plain Text; 1 - TeX Format.
