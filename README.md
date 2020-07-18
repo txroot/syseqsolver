@@ -2,7 +2,9 @@
 
 ## **syseqsolver**
 
-Linear Equations System Solver (unique solution and equations = unknowns)
+Linear Equations System Solver (real and complex numbers)
+Requires unique solution and equations = unknowns
+
 
 **Class linearEqSystem:**
 
