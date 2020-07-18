@@ -1,3 +1,4 @@
+
 ## **syseqsolver**
 
 Linear Equations System Solver (unique solution and equations = unknowns)
@@ -27,3 +28,11 @@ Linear Equations System Solver (unique solution and equations = unknowns)
     @param {int} outFormat    Output format: 0 - Plain Text; 1 - TeX Format.
     @param {int} decPlaces    Desired Decimal Places
     @returns {string}    Return a Prettified Number
+
+Look at some of the provided examples...
+
+*
+
+*Developed and maintained by André Rocha*
+
+*
