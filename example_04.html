@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script type="text/javascript" src="vendor/mathjs/math.js"></script>
+    <script type="text/javascript" src="vendor/algebrajs/algebra-0.2.6.min.js"></script>
+    <script type="text/javascript" src="vendor/algebrite/algebrite.bundle-for-browser.js"></script>
+    <script src="./scripts/syseqsolver.js" type="text/javascript"></script>
+    <script src="./scripts/prettify.js" type="text/javascript"></script>
+    <script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
+    <style>
+        img {
+          display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+
+    var ziq = new linearEqSystem();
+
+    var eq = new Array();
+
+    // Enunciate equations
+    eq[0] = "-(A - 10i) / (+3) - (A - 10i) / (+2.6) - (A - a) / (-1.59^(-4) * i + 0 + 3.14^(+6) * i)";
+    eq[1] = "(A - a) / (-1.59^(-4) * i + 0 + 3.14^(+6) * i) - (a) / (+2.51^(+6) * i) - (a - 20) / (-3^(-6) * i + 6)";
+
+    // Add equations
+    for(i=0; i<eq.length; i++) {
+        ziq.addEquation(eq[i]);
+    }
+
+    // Build the System of Linear Equations
+    ziq.buildSystem();
+
+    var r = solve(ziq.coefMatrix, ziq.consMatrix, ziq.varMatrix, 3);
+
+
+    // Print data to Console and HTML Document
+    console.log(s);
+    document.write('<br><br>System of Linear Equations<br><br>');
+
+    var s;
+    for(i=0; i<eq.length; i++) {
+        s = "0=" + math.parse(eq[i]).toTex();
+        s = "<p><img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/></p>";
+        document.write(s);
+    }
+
+    // Results using Cartesian Coordinates
+    document.write('<br><br>Results using Cartesian Coordinates<br><br>');
+    s = math.parse(r.toString()).toTex();
+    s = "<p><img src=\"http://latex.codecogs.com/gif.latex?" + s + "\" border=\"0\"/><p>";
+    document.write(s);
+
+    document.write("<p>Job done!<br><span style='font-size:25px;'>&#129488;</span> <|> <span style='font-size:30px;'>&#9818;</span></p>");
+    console.log('Job done!');
+
+</script>
+</body>
+</html>
